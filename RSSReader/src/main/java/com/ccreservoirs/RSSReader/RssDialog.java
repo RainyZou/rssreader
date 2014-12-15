@@ -17,13 +17,19 @@ import java.awt.GridBagConstraints;
 
 import javax.swing.JTextField;
 
+import com.ccreservoirs.RSSReader.entity.RSSFeed;
+
 import java.awt.Insets;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class RssDialog extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
-	private JTextField textField;
-	private JTextField textField_1;
+
+	private RSSFeed feed;
+	private JTextField urlVar;
+	private JTextField nameVar;
 
 	/**
 	 * Launch the application.
@@ -42,16 +48,22 @@ public class RssDialog extends JDialog {
 	 * Create the dialog.
 	 */
 	public RssDialog() {
+		super((Frame) null, true);
+		initComponent();
+	}
+
+	public void initComponent() {
 		setTitle("Rss Setting");
 		setBounds(100, 100, 306, 141);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		GridBagLayout gbl_contentPanel = new GridBagLayout();
-		gbl_contentPanel.columnWidths = new int[]{0, 0, 0};
-		gbl_contentPanel.rowHeights = new int[]{0, 0, 0};
-		gbl_contentPanel.columnWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
-		gbl_contentPanel.rowWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+		gbl_contentPanel.columnWidths = new int[] { 0, 0, 0 };
+		gbl_contentPanel.rowHeights = new int[] { 0, 0, 0 };
+		gbl_contentPanel.columnWeights = new double[] { 0.0, 1.0,
+				Double.MIN_VALUE };
+		gbl_contentPanel.rowWeights = new double[] { 0.0, 0.0, Double.MIN_VALUE };
 		contentPanel.setLayout(gbl_contentPanel);
 		{
 			JLabel lblRssLocation = new JLabel("*Rss Location:");
@@ -63,14 +75,14 @@ public class RssDialog extends JDialog {
 			contentPanel.add(lblRssLocation, gbc_lblRssLocation);
 		}
 		{
-			textField = new JTextField();
-			GridBagConstraints gbc_textField = new GridBagConstraints();
-			gbc_textField.insets = new Insets(0, 0, 5, 0);
-			gbc_textField.fill = GridBagConstraints.HORIZONTAL;
-			gbc_textField.gridx = 1;
-			gbc_textField.gridy = 0;
-			contentPanel.add(textField, gbc_textField);
-			textField.setColumns(10);
+			urlVar = new JTextField();
+			GridBagConstraints gbc_urlVar = new GridBagConstraints();
+			gbc_urlVar.insets = new Insets(0, 0, 5, 0);
+			gbc_urlVar.fill = GridBagConstraints.HORIZONTAL;
+			gbc_urlVar.gridx = 1;
+			gbc_urlVar.gridy = 0;
+			contentPanel.add(urlVar, gbc_urlVar);
+			urlVar.setColumns(10);
 		}
 		{
 			JLabel lblName = new JLabel("Name:");
@@ -82,13 +94,13 @@ public class RssDialog extends JDialog {
 			contentPanel.add(lblName, gbc_lblName);
 		}
 		{
-			textField_1 = new JTextField();
-			GridBagConstraints gbc_textField_1 = new GridBagConstraints();
-			gbc_textField_1.fill = GridBagConstraints.HORIZONTAL;
-			gbc_textField_1.gridx = 1;
-			gbc_textField_1.gridy = 1;
-			contentPanel.add(textField_1, gbc_textField_1);
-			textField_1.setColumns(10);
+			nameVar = new JTextField();
+			GridBagConstraints gbc_nameVar = new GridBagConstraints();
+			gbc_nameVar.fill = GridBagConstraints.HORIZONTAL;
+			gbc_nameVar.gridx = 1;
+			gbc_nameVar.gridy = 1;
+			contentPanel.add(nameVar, gbc_nameVar);
+			nameVar.setColumns(10);
 		}
 		{
 			JPanel buttonPane = new JPanel();
@@ -96,20 +108,44 @@ public class RssDialog extends JDialog {
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
 				JButton okButton = new JButton("OK");
+				okButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						String url = urlVar.getText();
+						String name = nameVar.getText();
+						feed = new RSSFeed();
+						feed.setName(name);
+						feed.setLink(url);
+						dispose();
+					}
+				});
 				okButton.setActionCommand("OK");
 				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);
 			}
 			{
 				JButton cancelButton = new JButton("Cancel");
+				cancelButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						dispose();
+					}
+				});
 				cancelButton.setActionCommand("Cancel");
 				buttonPane.add(cancelButton);
 			}
 		}
 	}
-	
-	public RssDialog(Frame owner, boolean modal){
-		super(owner);
+
+	public RssDialog(Frame owner, boolean modal) {
+		super(owner, modal);
+		initComponent();
+	}
+
+	public RSSFeed getFeed() {
+		return feed;
+	}
+
+	public void setFeed(RSSFeed feed) {
+		this.feed = feed;
 	}
 
 }

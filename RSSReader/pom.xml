@@ -36,5 +36,16 @@
 			<artifactId>httpclient</artifactId>
 			<version>4.3.3</version>
 		</dependency>
+		<!-- Log4j -->
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.16</version>
+		</dependency>
 	</dependencies>
 </project>

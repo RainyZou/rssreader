@@ -14,6 +14,7 @@ public class RSSFeed implements Serializable {
 	private String link;
 	private String description;
 	private String pubDate;
+	private String name;
 
 	@Override
 	public String toString() {
@@ -26,6 +27,14 @@ public class RSSFeed implements Serializable {
 
 	public String getTitle() {
 		return title;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public void setTitle(String title) {
