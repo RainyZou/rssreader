@@ -1,21 +1,23 @@
-package com.ccreservoirs.RSSReader;
+package com.ccreservoirs.util;
 
-import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 import com.ccreservoirs.RSSReader.entity.RSSFeed;
+import com.ccreservoirs.RSSReader.entity.RSSItem;
 import com.ccreservoirs.services.FeedService;
 
-/**
- * Hello world!
- *
- */
-public class Main {
-	public static void main(String[] args) {
+public class FeedUtil {
 
-		String urlPath = "http://news.qq.com/newsgn/rss_newsgn.xml";
+	public static List<RSSItem> getItems(String urlPath) {
+		return getFeed(urlPath).getItemList();
+	}
+
+	private static RSSFeed getFeed(String urlPath) {
+
 		HttpURLConnection httpConnection = null;
+		RSSFeed feed = null;
 		URL url;
 		FeedService fs = new FeedService();
 		int code = 0;
@@ -40,11 +42,14 @@ public class Main {
 		if (code == HttpURLConnection.HTTP_OK) {
 			try {
 				String strCurrentLine;
-				RSSFeed feed = fs.getFeed(httpConnection.getInputStream());
+				feed = fs.getFeed(httpConnection.getInputStream());
 
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
+
+		return feed;
 	}
+
 }

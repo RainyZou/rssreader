@@ -39,8 +39,7 @@ public class RSSItem implements Serializable {
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return "[tilte]:" + title + "[link]:" + link + "[description]:"
-				+ description;
+		return title;
 	}
 
 }

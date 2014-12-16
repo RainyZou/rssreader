@@ -5,30 +5,48 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
+import javax.swing.DefaultListModel;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.ccreservoirs.RSSReader.entity.RSSFeed;
+import com.ccreservoirs.RSSReader.entity.RSSItem;
+import com.ccreservoirs.util.FeedUtil;
 
 public class UIPanel extends JPanel {
-	private JList list;
 	private Log log = LogFactory.getLog(UIPanel.class);
+	DefaultListModel<RSSFeed> modelFeed;
+	DefaultListModel<RSSItem> modelItem;
+	private JList itemList;
+	private JEditorPane descConent;
+	private JList rssList;
+	private JScrollPane htmlPane;
 
 	/**
 	 * Create the panel.
 	 */
 	public UIPanel() {
+		
+		setSize(800, 600);
+
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[] { 150, 150, 0, 0 };
+		gridBagLayout.columnWidths = new int[] { 200, 200, 0, 0 };
 		gridBagLayout.rowHeights = new int[] { 0, 0 };
 		gridBagLayout.columnWeights = new double[] { 0.0, 0.0, 1.0,
 				Double.MIN_VALUE };
@@ -65,7 +83,7 @@ public class UIPanel extends JPanel {
 				RssDialog jd = new RssDialog(new JFrame(), true);
 				jd.setVisible(true);
 				RSSFeed feed = jd.getFeed();
-				log.info(feed);
+				modelFeed.addElement(feed);
 
 			}
 		});
@@ -74,20 +92,60 @@ public class UIPanel extends JPanel {
 		gbc_btnAdd.gridx = 1;
 		gbc_btnAdd.gridy = 0;
 		panel.add(btnAdd, gbc_btnAdd);
+		modelFeed = new DefaultListModel<RSSFeed>();
 
-		list = new JList();
-		GridBagConstraints gbc_list = new GridBagConstraints();
-		gbc_list.insets = new Insets(0, 0, 5, 0);
-		gbc_list.gridwidth = 2;
-		gbc_list.fill = GridBagConstraints.BOTH;
-		gbc_list.gridx = 0;
-		gbc_list.gridy = 1;
-		panel.add(list, gbc_list);
+		JScrollPane scrollPane_3 = new JScrollPane();
+		GridBagConstraints gbc_scrollPane_3 = new GridBagConstraints();
+		gbc_scrollPane_3.gridwidth = 2;
+		gbc_scrollPane_3.insets = new Insets(0, 0, 5, 5);
+		gbc_scrollPane_3.fill = GridBagConstraints.BOTH;
+		gbc_scrollPane_3.gridx = 0;
+		gbc_scrollPane_3.gridy = 1;
+		panel.add(scrollPane_3, gbc_scrollPane_3);
+
+		rssList = new JList();
+		rssList.setModel(modelFeed);
+
+		rssList.addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+				if (!e.getValueIsAdjusting()) {
+					return;
+				}
+				final RSSFeed tempFeed = (RSSFeed) rssList.getSelectedValue();
+				log.info(tempFeed);
+				new SwingWorker<List<RSSItem>, Void>() {
+
+					@Override
+					protected List<RSSItem> doInBackground() throws Exception {
+						return FeedUtil.getItems(tempFeed.getLink());
+					}
+
+					protected void done() {
+						// 没有必要用invokeLater！因为done()本身是在EDT中执行的
+						SwingUtilities.invokeLater(new Runnable() {
+
+							public void run() {
+								try {
+									List<RSSItem> items = get();
+									modelItem.clear();
+									for (RSSItem rssItem : items) {
+										modelItem.addElement(rssItem);
+									}
+								} catch (Exception e) {
+									log.error(e);
+								}
+							};
+						});
+					}
+				}.execute();
+
+			}
+		});
+		scrollPane_3.setViewportView(rssList);
 
 		JButton button = new JButton("星形记录");
 		GridBagConstraints gbc_button = new GridBagConstraints();
 		gbc_button.gridwidth = 2;
-		gbc_button.insets = new Insets(0, 0, 0, 5);
 		gbc_button.gridx = 0;
 		gbc_button.gridy = 2;
 		panel.add(button, gbc_button);
@@ -100,19 +158,38 @@ public class UIPanel extends JPanel {
 		gbc_scrollPane_1.gridy = 0;
 		add(scrollPane_1, gbc_scrollPane_1);
 
-		JList list_1 = new JList();
-		scrollPane_1.setViewportView(list_1);
+		itemList = new JList();
+		modelItem = new DefaultListModel<RSSItem>();
+		itemList.setModel(modelItem);
+		itemList.addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+				if (!e.getValueIsAdjusting()) {
+					return;
+				}
+				RSSItem item = (RSSItem) itemList.getSelectedValue();
 
-		JScrollPane scrollPane_2 = new JScrollPane();
-		GridBagConstraints gbc_scrollPane_2 = new GridBagConstraints();
-		gbc_scrollPane_2.fill = GridBagConstraints.BOTH;
-		gbc_scrollPane_2.gridx = 2;
-		gbc_scrollPane_2.gridy = 0;
-		add(scrollPane_2, gbc_scrollPane_2);
+				descConent.setText(item.getDescription() == null ? "" : item
+						.getDescription());
 
-		JEditorPane editorPane = new JEditorPane();
-		scrollPane_2.setViewportView(editorPane);
+				descConent.setCaretPosition(0);
+			}
+		});
+
+		scrollPane_1.setViewportView(itemList);
+
+		htmlPane = new JScrollPane();
+
+		GridBagConstraints gbc_htmlPane = new GridBagConstraints();
+		gbc_htmlPane.fill = GridBagConstraints.BOTH;
+		gbc_htmlPane.gridx = 2;
+		gbc_htmlPane.gridy = 0;
+		add(htmlPane, gbc_htmlPane);
+
+		descConent = new JEditorPane();
+		descConent.setContentType("text/html");
+		descConent.setEditable(false);
+
+		htmlPane.setViewportView(descConent);
 
 	}
-
 }

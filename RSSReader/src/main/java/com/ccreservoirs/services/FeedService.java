@@ -27,7 +27,7 @@ public class FeedService {
 		XmlPullParser pullParser = pullParserFactory.newPullParser();
 
 		// 设置需要解析的XML数据
-		pullParser.setInput(xml, "UTF-8");
+		pullParser.setInput(xml, "utf-8");
 
 		// 取得事件
 		int event = pullParser.getEventType();
@@ -41,6 +41,7 @@ public class FeedService {
 			case XmlPullParser.START_DOCUMENT: // 文档开始
 				feed = new RSSFeed();
 				feed.setItemList(new ArrayList<RSSItem>());
+
 				break;
 			case XmlPullParser.START_TAG: // 标签开始
 				if ("title".equals(nodeName)) {

@@ -19,8 +19,7 @@ public class RSSFeed implements Serializable {
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return "[title]:" + title + "[link]:" + link + "[description]:"
-				+ description + "[pubDate]:" + pubDate;
+		return name;
 	}
 
 	private List<RSSItem> itemList;
