@@ -27,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.ccreservoirs.RSSReader.entity.RSSFeed;
 import com.ccreservoirs.RSSReader.entity.RSSItem;
+import com.ccreservoirs.renderer.MyListCellRenderer;
 import com.ccreservoirs.util.FeedUtil;
 
 public class UIPanel extends JPanel {
@@ -42,7 +43,7 @@ public class UIPanel extends JPanel {
 	 * Create the panel.
 	 */
 	public UIPanel() {
-		
+
 		setSize(800, 600);
 
 		GridBagLayout gridBagLayout = new GridBagLayout();
@@ -161,17 +162,37 @@ public class UIPanel extends JPanel {
 		itemList = new JList();
 		modelItem = new DefaultListModel<RSSItem>();
 		itemList.setModel(modelItem);
+		itemList.setCellRenderer(new MyListCellRenderer());
 		itemList.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
 				if (!e.getValueIsAdjusting()) {
 					return;
 				}
-				RSSItem item = (RSSItem) itemList.getSelectedValue();
+				final RSSItem item = (RSSItem) itemList.getSelectedValue();
 
-				descConent.setText(item.getDescription() == null ? "" : item
-						.getDescription());
+				new SwingWorker<Void, Void>() {
 
-				descConent.setCaretPosition(0);
+					@Override
+					protected Void doInBackground() throws Exception {
+						// TODO Auto-generated method stub
+						return null;
+					}
+
+					protected void done() {
+						// 没有必要用invokeLater！因为done()本身是在EDT中执行的
+						SwingUtilities.invokeLater(new Runnable() {
+
+							public void run() {
+								descConent
+										.setText(item.getDescription() == null ? ""
+												: item.getDescription());
+								descConent.setCaretPosition(0);
+							};
+						});
+					}
+
+				}.execute();
+
 			}
 		});
 

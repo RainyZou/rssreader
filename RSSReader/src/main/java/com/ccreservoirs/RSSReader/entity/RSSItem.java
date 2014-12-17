@@ -1,6 +1,7 @@
 package com.ccreservoirs.RSSReader.entity;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 
 public class RSSItem implements Serializable {
 
@@ -11,6 +12,23 @@ public class RSSItem implements Serializable {
 	private String title;
 	private String link;
 	private String description;
+
+	/**
+	 * 通过 Feed 注入 date
+	 */
+	private String date;
+
+	public String getDate() {
+		return date;
+	}
+
+	public void setDate(String date) {
+		if (date == null || date.equalsIgnoreCase("")) {
+			this.date = date;
+		} else {
+			this.date = date.substring(0, date.indexOf(" "));
+		}
+	}
 
 	public String getTitle() {
 		return title;

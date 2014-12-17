@@ -69,6 +69,16 @@ public class FeedService {
 					}
 
 				}
+				
+				if ("pubDate".equals(nodeName)) {
+					String pubDate = pullParser.nextText();
+					if (item == null) {
+						feed.setPubDate(pubDate);
+					} else {
+						item.setDate(pubDate);
+					}
+
+				}
 
 				if ("item".equals(nodeName)) {
 					item = new RSSItem();
@@ -82,6 +92,13 @@ public class FeedService {
 			}
 			event = pullParser.next(); // 下一个标签
 
+		}
+
+		for (RSSItem itemTemp : feed.getItemList()) {
+			if (itemTemp.getDate() == null
+					|| itemTemp.getDate().equalsIgnoreCase("")) {
+				itemTemp.setDate(feed.getPubDate());
+			}
 		}
 
 		return feed;
