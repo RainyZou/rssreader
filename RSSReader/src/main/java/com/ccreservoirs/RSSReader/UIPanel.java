@@ -44,9 +44,6 @@ public class UIPanel extends JPanel {
 	 * Create the panel.
 	 */
 	public UIPanel() {
-
-		setSize(800, 600);
-
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[] { 200, 200, 0, 0 };
 		gridBagLayout.rowHeights = new int[] { 0, 0 };

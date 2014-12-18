@@ -89,7 +89,7 @@ public class SystemTrayTest {
 				};
 
 				trayIcon.setImageAutoSize(true);
-				trayIcon.addActionListener(actionListener);
+			//	trayIcon.addActionListener(actionListener);
 				trayIcon.addMouseListener(mouseListener);
 
 				// Depending on which Mustang build you have, you may need to
