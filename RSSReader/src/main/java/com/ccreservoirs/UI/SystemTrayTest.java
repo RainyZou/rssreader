@@ -78,7 +78,7 @@ public class SystemTrayTest {
 				popup.add(defaultItemOpen);
 				popup.add(defaultItem);
 
-				trayIcon = new TrayIcon(image, "Tray Demo", popup);
+				trayIcon = new TrayIcon(image, "Rss Reader", popup);
 
 				ActionListener actionListener = new ActionListener() {
 					public void actionPerformed(ActionEvent e) {

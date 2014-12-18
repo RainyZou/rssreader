@@ -1,11 +1,13 @@
-
 package com.ccreservoirs.RSSReader;
 
+import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.List;
 
 import javax.swing.DefaultListModel;
@@ -28,6 +30,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.ccreservoirs.RSSReader.entity.RSSFeed;
 import com.ccreservoirs.RSSReader.entity.RSSItem;
+import com.ccreservoirs.UI.PopUIFrame;
 import com.ccreservoirs.renderer.MyListCellRenderer;
 import com.ccreservoirs.util.FeedUtil;
 
@@ -161,6 +164,63 @@ public class UIPanel extends JPanel {
 		modelItem = new DefaultListModel<RSSItem>();
 		itemList.setModel(modelItem);
 		itemList.setCellRenderer(new MyListCellRenderer());
+		itemList.addMouseListener(new MouseListener() {
+
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+
+			}
+
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 2) {
+					final RSSItem item = (RSSItem) itemList.getSelectedValue();
+
+					new SwingWorker<Void, Void>() {
+
+						@Override
+						protected Void doInBackground() throws Exception {
+							// TODO Auto-generated method stub
+							return null;
+						}
+
+						protected void done() {
+							// 没有必要用invokeLater！因为done()本身是在EDT中执行的
+							SwingUtilities.invokeLater(new Runnable() {
+
+								public void run() {
+									PopUIFrame ui = new PopUIFrame();
+									ui.setTitle(item.getTitle());
+									ui.getHtmlPane().setText(
+											item.getDescription() == null ? ""
+													: item.getDescription());
+
+									ui.getHtmlPane().setCaretPosition(0);
+									ui.setVisible(true);
+									ui.setExtendedState(Frame.MAXIMIZED_BOTH);
+								};
+							});
+						}
+
+					}.execute();
+				}
+
+			}
+		});
 		itemList.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
 				if (!e.getValueIsAdjusting()) {
@@ -211,4 +271,5 @@ public class UIPanel extends JPanel {
 		htmlPane.setViewportView(descConent);
 
 	}
+
 }
