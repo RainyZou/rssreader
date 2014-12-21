@@ -9,12 +9,24 @@ public class RSSFeed implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -6559719213195928892L;
-
+	
+	
+	private int id;
 	private String title;
 	private String link;
 	private String description;
 	private String pubDate;
 	private String name;
+	
+	
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
 
 	@Override
 	public String toString() {

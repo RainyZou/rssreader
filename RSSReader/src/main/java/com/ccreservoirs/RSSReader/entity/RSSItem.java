@@ -12,6 +12,24 @@ public class RSSItem implements Serializable {
 	private String title;
 	private String link;
 	private String description;
+	private int id;
+	private int feedId;
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public int getFeedId() {
+		return feedId;
+	}
+
+	public void setFeedId(int feedId) {
+		this.feedId = feedId;
+	}
 
 	/**
 	 * 通过 Feed 注入 date
@@ -23,11 +41,7 @@ public class RSSItem implements Serializable {
 	}
 
 	public void setDate(String date) {
-		if (date == null || date.equalsIgnoreCase("")) {
-			this.date = date;
-		} else {
-			this.date = date.substring(0, date.indexOf(" "));
-		}
+		this.date = date;
 	}
 
 	public String getTitle() {
