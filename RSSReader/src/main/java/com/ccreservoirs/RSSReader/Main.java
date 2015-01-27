@@ -6,6 +6,7 @@ import java.net.URL;
 
 import com.ccreservoirs.RSSReader.entity.RSSFeed;
 import com.ccreservoirs.services.FeedService;
+import com.ccreservoirs.util.CharsetUtil;
 
 /**
  * Hello world!
@@ -40,7 +41,8 @@ public class Main {
 		if (code == HttpURLConnection.HTTP_OK) {
 			try {
 				String strCurrentLine;
-				RSSFeed feed = fs.getFeed(httpConnection.getInputStream());
+				RSSFeed feed = fs.getFeed(httpConnection.getInputStream(),
+						CharsetUtil.getFileEncode(urlPath));
 
 			} catch (Exception e) {
 				e.printStackTrace();

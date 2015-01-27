@@ -4,11 +4,16 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.ccreservoirs.RSSReader.entity.RSSFeed;
 import com.ccreservoirs.RSSReader.entity.RSSItem;
 import com.ccreservoirs.services.FeedService;
 
 public class FeedUtil {
+
+	private static final Log log = LogFactory.getLog(FeedUtil.class);
 
 	public static List<RSSItem> getItems(String urlPath) {
 		return getFeed(urlPath).getItemList();
@@ -36,16 +41,17 @@ public class FeedUtil {
 			// writer.close();
 			code = httpConnection.getResponseCode();
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error("", e);
 		}
 
 		if (code == HttpURLConnection.HTTP_OK) {
 			try {
 				String strCurrentLine;
-				feed = fs.getFeed(httpConnection.getInputStream());
+				feed = fs.getFeed(httpConnection.getInputStream(),
+						CharsetUtil.getFileEncode(urlPath));
 
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.error("", e);
 			}
 		}
 

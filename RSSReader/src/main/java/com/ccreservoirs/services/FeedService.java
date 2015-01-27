@@ -1,6 +1,7 @@
 package com.ccreservoirs.services;
 
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -14,8 +15,14 @@ public class FeedService {
 	/**
 	 * 从流中读取 RSS Feed
 	 */
-	public RSSFeed getFeed(InputStream xml) throws Exception {
+	public RSSFeed getFeed(InputStream xml, Charset charset) throws Exception {
 
+		String charsetname  = "";
+		if (charset == null) {
+			charsetname = "utf-8";
+		}else{
+			charsetname = charset.name();
+		}
 		RSSFeed feed = null;
 		RSSItem item = null;
 
@@ -27,7 +34,7 @@ public class FeedService {
 		XmlPullParser pullParser = pullParserFactory.newPullParser();
 
 		// 设置需要解析的XML数据
-		pullParser.setInput(xml, "utf-8");
+		pullParser.setInput(xml, charsetname);
 
 		// 取得事件
 		int event = pullParser.getEventType();
@@ -69,7 +76,7 @@ public class FeedService {
 					}
 
 				}
-				
+
 				if ("pubDate".equals(nodeName)) {
 					String pubDate = pullParser.nextText();
 					if (item == null) {

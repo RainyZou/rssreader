@@ -15,6 +15,31 @@
 	</properties>
 
 	<dependencies>
+
+		<!-- Charset detected -->
+		<dependency>
+			<groupId>antlr</groupId>
+			<artifactId>antlr</artifactId>
+			<version>2.7.7</version>
+		</dependency>
+		<dependency>
+			<groupId>com.ccreservoirs.charset</groupId>
+			<artifactId>chardet1</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.ccreservoirs.charset</groupId>
+			<artifactId>cpdetector</artifactId>
+			<version>1.0.10</version>
+		</dependency>
+		<dependency>
+			<groupId>com.ccreservoirs.charset</groupId>
+			<artifactId>jargs</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
