@@ -1,12 +1,7 @@
-package com.lks.rss_saxparser;
+package com.ccreservoirs.rss;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
-
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.xml.sax.SAXException;
 
 import android.app.Activity;
 import android.content.Intent;
