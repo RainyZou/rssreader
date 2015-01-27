@@ -1,15 +1,18 @@
 package com.lks.rss_saxparser;
 
-import android.os.Bundle;
+import java.net.URL;
+
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.text.Html;
+import android.text.Html.ImageGetter;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
-import android.support.v4.app.NavUtils;
 
 public class ShowDescriptionActivity extends Activity {
 
@@ -24,19 +27,19 @@ public class ShowDescriptionActivity extends Activity {
 			Bundle bundle = intent
 					.getBundleExtra("android.intent.extra.rssItem");
 			if (bundle == null) {
-				content = "不好意思程序出错啦";
+				content = "No more contents";
 			} else {
 				content = bundle.getString("title") + "\n\n"
-						+ bundle.getString("pubdate") + "\n\n"
-						+ bundle.getString("description").replace('\n', ' ')
-						+ "\n\n详细信息请访问以下网址:\n" + bundle.getString("link");
+						+ bundle.getString("date") + "\n\n"
+						+ bundle.getString("description")
+						+ bundle.getString("link");
 			}
 		} else {
-			content = "不好意思程序出错啦";
+			content = "No more contents";
 		}
 
 		TextView contentText = (TextView) this.findViewById(R.id.content);
-		contentText.setText(content);
+		contentText.setText(Html.fromHtml(content, imageGetter, null));
 
 		Button backButton = (Button) this.findViewById(R.id.back);
 		backButton.setOnClickListener(new OnClickListener() {
@@ -47,6 +50,23 @@ public class ShowDescriptionActivity extends Activity {
 			}
 		});
 	}
+
+	ImageGetter imageGetter = new ImageGetter() {
+		@Override
+		public Drawable getDrawable(String source) {
+			Drawable drawable = null;
+			URL url;
+			try {
+				url = new URL(source);
+				drawable = Drawable.createFromStream(url.openStream(), ""); // 鑾峰彇缃戣矾鍥剧墖
+			} catch (Exception e) {
+				return null;
+			}
+			drawable.setBounds(0, 0, drawable.getIntrinsicWidth(),
+					drawable.getIntrinsicHeight());
+			return drawable;
+		}
+	};
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

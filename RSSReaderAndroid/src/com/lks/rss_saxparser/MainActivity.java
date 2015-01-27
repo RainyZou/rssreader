@@ -1,65 +1,57 @@
 package com.lks.rss_saxparser;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
-import com.lks.rss_saxparser.R;
-import com.lks.rss_saxparser.entity.RssFeed;
-import com.lks.rss_saxparser.entity.RssItem;
-import com.lks.rss_saxparser.saxparser.RssFeed_SAXParser;
-
-import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.support.v4.app.NavUtils;
+
+import com.ccreservoirs.RSSReader.entity.RSSItem;
+import com.ccreservoirs.util.FeedUtil;
 
 public class MainActivity extends Activity implements OnItemClickListener {
 
-	// ´ÓÍøÂç»ñÈ¡RSSµØÖ·
-	public final String RSS_URL = "http://blog.csdn.net/rss.html?type=Home&channel=mobile";
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡RSSï¿½ï¿½Ö·
+	public final String RSS_URL = "http://blog.csdn.net/rss.html?type=Home&channel=";
 
 	public final String tag = "RSSReader";
-	private RssFeed feed = null;
+	private List<HashMap<String, String>> items = null;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		try {
-			feed = new RssFeed_SAXParser().getFeed(RSS_URL);
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		} catch (SAXException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+
+		items = FeedUtil.getItemsMap(RSS_URL);
+
 		showListView();
 	}
 
 	/*
-	 * °ÑRSSÄÚÈÝ°ó¶¨µ½ui½çÃæ½øÐÐÏÔÊ¾
+	 * ï¿½ï¿½RSSï¿½ï¿½ï¿½Ý°ó¶¨µï¿½uiï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾
 	 */
 	private void showListView() {
 
 		ListView itemList = (ListView) this.findViewById(R.id.list);
-		if (feed == null) {
-			setTitle("·ÃÎÊµÄRSSÎÞÐ§");
+		if (items == null) {
+			setTitle("No rss items");
 			return;
 		}
-		SimpleAdapter simpleAdapter = new SimpleAdapter(this,
-				feed.getAllItems(), android.R.layout.simple_list_item_2,
-				new String[] { RssItem.TITLE, RssItem.PUBDATE }, new int[] {
+		SimpleAdapter simpleAdapter = new SimpleAdapter(this, items,
+				android.R.layout.simple_list_item_2, new String[] {
+						RSSItem.TITLE, RSSItem.DATE }, new int[] {
 						android.R.id.text1, android.R.id.text2 });
 		itemList.setAdapter(simpleAdapter);
 		itemList.setOnItemClickListener(this);
@@ -73,19 +65,21 @@ public class MainActivity extends Activity implements OnItemClickListener {
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+	public void onItemClick(AdapterView<?> adapterView, View view,
+			int position, long id) {
 
 		Intent intent = new Intent();
 		intent.setClass(this, ShowDescriptionActivity.class);
 		Bundle bundle = new Bundle();
-		bundle.putString("title", feed.getItem(position).getTitle());
-		bundle.putString("description",feed.getItem(position).getDescription());
-		bundle.putString("link", feed.getItem(position).getLink());
-		bundle.putString("pubdate", feed.getItem(position).getPubdate());
-		// ÓÃandroid.intent.extra.INTENTµÄÃû×ÖÀ´´«µÝ²ÎÊý
+		bundle.putString("title", items.get(position).get(RSSItem.TITLE));
+		bundle.putString("description",
+				items.get(position).get(RSSItem.DESCRIPTION));
+		bundle.putString("link", items.get(position).get(RSSItem.LINK));
+		bundle.putString("date", items.get(position).get(RSSItem.DATE));
+	
 		intent.putExtra("android.intent.extra.rssItem", bundle);
 		startActivityForResult(intent, 0);
-		
+
 	}
 
 }
