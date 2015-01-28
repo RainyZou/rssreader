@@ -11,7 +11,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Html;
-import android.text.Html.ImageGetter;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -19,6 +18,8 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.ccreservoirs.util.URLImageGetter;
 
 public class ShowDescriptionActivity extends Activity {
 
@@ -46,7 +47,9 @@ public class ShowDescriptionActivity extends Activity {
 		}
 		Button backButton = (Button) this.findViewById(R.id.back);
 		TextView contentText = (TextView) this.findViewById(R.id.content);
-		contentText.setText(Html.fromHtml(content, new MyImageGetter(), null));
+		URLImageGetter reviewImgGetter = new URLImageGetter(
+				ShowDescriptionActivity.this, contentText);// 实例化URLImageGetter类
+		contentText.setText(Html.fromHtml(content, reviewImgGetter, null));
 
 		backButton.setOnClickListener(new OnClickListener() {
 
@@ -57,40 +60,19 @@ public class ShowDescriptionActivity extends Activity {
 		});
 	}
 
-	// ImageGetter imageGetter = new ImageGetter() {
-	// @Override
-	// public Drawable getDrawable(String source) {
-	// Drawable drawable = null;
-	// URL url;
-	// InputStream input = null;
-	// try {
-	// Log.i("", source);
-	// url = new URL(source);
-	// input = url.openStream();
-	// drawable = Drawable.createFromStream(input, ""); // 获取网路图片
-	// input.close();
-	// } catch (Exception e) {
-	// return null;
-	// }
-	// drawable.setBounds(0, 0, drawable.getIntrinsicWidth(),
-	// drawable.getIntrinsicHeight());
-	// return drawable;
-	// }
-	// };
-
 	private class MyImageGetter implements Html.ImageGetter {
 
 		@Override
-		public Drawable getDrawable(String arg0) {
-			
-			Log.i("", arg0);
+		public Drawable getDrawable(String source) {
+
+			Log.i("", source);
 			Bitmap bitmap;
 
 			try {
 				BitmapFactory.Options o = new BitmapFactory.Options();
 				o.inJustDecodeBounds = true;
 				BitmapFactory.decodeStream(
-						(InputStream) new URL(arg0).getContent(), null, o);
+						(InputStream) new URL(source).getContent(), null, o);
 				// The new size we want to scale to
 				final int REQUIRED_SIZE = 200;
 
@@ -104,8 +86,8 @@ public class ShowDescriptionActivity extends Activity {
 				BitmapFactory.Options o2 = new BitmapFactory.Options();
 				o2.inSampleSize = scale;
 				// HKEY_CURRENT_USER\Software\Google\Chrome\Metro
-				bitmap = BitmapFactory.decodeStream(
-						(InputStream) new URL(arg0).getContent(), null, o2);
+				bitmap = BitmapFactory.decodeStream((InputStream) new URL(
+						source).getContent(), null, o2);
 
 				@SuppressWarnings("deprecation")
 				Drawable drawable = new BitmapDrawable(bitmap);
